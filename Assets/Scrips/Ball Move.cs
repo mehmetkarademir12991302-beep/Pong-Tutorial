@@ -1,36 +1,41 @@
 using UnityEngine;
-using UnityEngine.InputSystem; 
 
 public class BallMove : MonoBehaviour
 {
-    [Header("Top Ayari")]
-    [SerializeField] private float speed = 10f;
+    public float hiz = 10f;
     private Rigidbody2D rb;
 
     void Start()
     {
-        rb = GetComponent <Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
+        rb.freezeRotation = true;
 
-        float Xdirection = 1f;
-        float Ydirection = 1f;
-
-        if(Random.Range(0,2) == 0) Xdirection = -1f;
-
-        if(Random.Range(0,2) == 0) Ydirection = -1f;
-
-        rb.linearVelocity = new Vector2(Xdirection,Ydirection).normalized*speed;
+        TopuFirlat();
     }
 
-    private void onCollisionEnter2D(Collision2D collision)
+    void TopuFirlat()
     {
-        if(collision.gameObject.CompareTag("Wall"))
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x , -rb.linearVelocity.y);
-        }
+        float x = Random.Range(0, 2) == 0 ? -1f : 1f;
+        float y = Random.Range(0, 2) == 0 ? -1f : 1f;
 
-        else if(collision.gameObject.CompareTag("Player"))
+        rb.linearVelocity = new Vector2(x, y).normalized * hiz;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
         {
-            rb.linearVelocity = new Vector2(-rb.linearVelocity.x , rb.linearVelocity.y);
+            rb.linearVelocity = new Vector2(-rb.linearVelocity.x, rb.linearVelocity.y);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Goal"))
+        {
+            transform.position = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
+            TopuFirlat();
         }
     }
 }
